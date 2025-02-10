@@ -22,12 +22,10 @@ final class SolicitudHttp implements Runnable {
     final static String CRLF = "\r\n";
     private Socket socket;
 
-    // Constructor
     public SolicitudHttp(Socket socket) throws Exception {
         this.socket = socket;
     }
-
-    // Implementa el método run() de la interface Runnable.
+   
     public void run() {
         try {
             proceseSolicitud();
@@ -37,20 +35,16 @@ final class SolicitudHttp implements Runnable {
     }
 
     private void proceseSolicitud() throws Exception {
-        // Referencia al stream de salida del socket.
+
         DataOutputStream os = new DataOutputStream(socket.getOutputStream());
 
-        // Referencia y filtros para el stream de entrada.
         BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-        // Recoge la línea de solicitud HTTP del mensaje.
         String lineaDeSolicitud = br.readLine();
 
-        // Muestra la línea de solicitud en la pantalla.
         System.out.println();
         System.out.println(lineaDeSolicitud);
 
-        // Recoge y muestra las líneas de header.
         String lineaDelHeader;
         while ((lineaDelHeader = br.readLine()).length() != 0) {
             System.out.println(lineaDelHeader);
@@ -58,14 +52,14 @@ final class SolicitudHttp implements Runnable {
 
 
 
-    // Extrae el nombre del archivo de la línea de solicitud.
+
     StringTokenizer partesLinea = new StringTokenizer(lineaDeSolicitud);
-    partesLinea.nextToken();  // "salta" sobre el método, se supone que debe ser "GET"
+    partesLinea.nextToken();  
     String nombreArchivo = partesLinea.nextToken();
 
-    // Anexa un ".", de tal forma que el archivo solicitado debe estar en el directorio actual.
+
     nombreArchivo = "." + nombreArchivo;
-    // Abre el archivo seleccionado.
+
     FileInputStream fis = null;
     boolean existeArchivo = true;
     try {
@@ -73,7 +67,7 @@ final class SolicitudHttp implements Runnable {
     } catch (FileNotFoundException e) {
       existeArchivo = false;
     }
-    // Construye el mensaje de respuesta.
+  
     String lineaDeEstado = null;
     String lineaDeTipoContenido = null;
     String cuerpoMensaje = null;
@@ -101,7 +95,6 @@ final class SolicitudHttp implements Runnable {
         os.writeBytes(cuerpoMensaje);  
     }
     
-        // Cierra los streams y el socket.
         os.close();
         br.close();
         socket.close();
@@ -109,11 +102,9 @@ final class SolicitudHttp implements Runnable {
 
     private static void enviarBytes(FileInputStream fis, OutputStream os) throws Exception
     {
-       // Construye un buffer de 1KB para guardar los bytes cuando van hacia el socket.
        byte[] buffer = new byte[1024];
        int bytes = 0;
     
-       // Copia el archivo solicitado hacia el output stream del socket.
        while((bytes = fis.read(buffer)) != -1 ) {
           os.write(buffer, 0, bytes);
        }
